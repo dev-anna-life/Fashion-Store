@@ -51,7 +51,7 @@ const ProductDetail = () => {
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 p-8">
-            {/* Product Image */}
+            
             <div className="flex items-center justify-center bg-gray-100 rounded-lg p-8">
               <img
                 src={product.image}
@@ -60,7 +60,6 @@ const ProductDetail = () => {
               />
             </div>
 
-            {/* Product Info */}
             <div className="flex flex-col">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 {product.title}

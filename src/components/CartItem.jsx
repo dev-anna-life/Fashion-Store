@@ -21,9 +21,7 @@ const CartItem = ({ item }) => {
         </div>
       </div>
 
-      {/* Quantity Controls and Price - Mobile Layout */}
       <div className="flex items-center justify-between sm:justify-end gap-4">
-        {/* Quantity Controls */}
         <div className="flex items-center space-x-2">
           <button
             onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -42,12 +40,10 @@ const CartItem = ({ item }) => {
           </button>
         </div>
 
-        {/* Total Price */}
         <p className="text-lg font-bold text-gray-900 min-w-[80px] text-right">
           ${(item.price * item.quantity).toFixed(2)}
         </p>
 
-        {/* Delete Button */}
         <button
           onClick={() => removeFromCart(item.id)}
           className="text-red-500 hover:text-red-700 flex-shrink-0"
