@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
 
     <button
       onClick={handleWishListToggle}
-      className="absolute top-3 right-3 z-10 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+      className="absolute top-3 left-3 z-10 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
       >
         {isInWishList(product.id) ? (
           <svg
