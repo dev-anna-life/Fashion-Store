@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchProductById } from '../data/api';
 import { useCart } from '../context/CartContext';
+import toast from 'react-hot-toast';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -19,6 +20,14 @@ const ProductDetail = () => {
 
     loadProduct();
   }, [id]);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    toast.success('Added to cart!', {
+      duration: 2000,
+      icon: '🛒'
+    });
+  };
 
   if (loading) {
     return (
@@ -90,7 +99,7 @@ const ProductDetail = () => {
               </div>
 
               <button
-                onClick={() => addToCart(product)}
+                onClick={handleAddToCart}
                 className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition text-lg font-medium"
               >
                 Add to Cart
