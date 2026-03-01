@@ -10,8 +10,10 @@ const Navbar = () => {
         <nav className="bg-white shadow-lg sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <Link to="/" className="text-2xl font-bold text-gray-800">
-                        Fashion Store
+                    <Link to="/" className="flex items-center space-x-2">
+                        <img src="/Fashion-logo.png" alt="Fashion Store Logo" 
+                        className="h-16 w-auto" />
+                        <span className="text-xl font-bold text-gray-800">Fashion Store</span>
                     </Link>
 
                     <div className="flex items-center space-x-8">

@@ -31,6 +31,7 @@ const Checkout = () => {
 
   const shippingCost = 10;
   const totalAmount = getCartTotal() + shippingCost;
+  const nairaAmount = totalAmount * 1500;
 
   const handlePayment = (e) => {
     e.preventDefault();
@@ -44,41 +45,50 @@ const Checkout = () => {
     const timestamp = new Date().getTime();
     const uniqueRef = `ORDER_${timestamp}_${paymentCounter.current}`;
 
-    const handler = window.PaystackPop.setup({
-      key: 'pk_test_4aba83d13c9c175451c8954d78b3dcec40e25c0b',
-      email: formData.email,
-      amount: totalAmount * 100,
-      currency: 'NGN',
-      ref: uniqueRef,
-      metadata: {
-        custom_fields: [
-          {
-            display_name: 'Customer Name',
-            variable_name: 'customer_name',
-            value: formData.fullName,
-          },
-          {
-            display_name: 'Phone Number',
-            variable_name: 'phone_number',
-            value: formData.phone,
-          },
-        ],
-      },
-      onClose: function () {
-        toast.error('Payment cancelled. Please try again.', { icon: '❌' });
-      },
-      callback: function (response) {
-        console.log('Payment successful!', response);
-        toast.success('Payment successful! Order confirmed! 🎉', { duration: 4000 });
-        clearCart();
+    let paymentCompleted = false;
 
+    window.FlutterwaveCheckout({
+      public_key: 'FLWPUBK_TEST-6d5974022d49b0e8eae62aedb2f68143-X',
+      tx_ref: uniqueRef,
+      amount: nairaAmount,
+      currency: 'NGN',
+      payment_options: 'card,banktransfer,ussd,mobilemoney',
+      customer: {
+        email: formData.email,
+        phone_number: formData.phone,
+        name: formData.fullName,
+      },
+      customizations: {
+        title: 'Fashion Store',
+        description: `Payment for order ${uniqueRef}`,
+        logo: '/fashion-logo.png',
+      },
+      callback: function (data) {
+        console.log('Payment callback triggered!', data);
+        paymentCompleted = true;
+
+        if (data.status === 'successful') {
+          const modal = document.querySelector('.flutterwave-modal, [class*="flw-modal"]');
+          if (modal) modal.style.display = 'none';
+
+          toast.success('Payment successful! Order confirmed! 🎉', { duration: 2000 });
+          clearCart();
+
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else {
+          toast.error('Payment was not completed');
+        }
+      },
+      onclose: function () {
         setTimeout(() => {
-          navigate('/');
-        }, 2000);
+          if (!paymentCompleted) {
+            toast.error('Payment cancelled. Please try again.', { icon: '❌' });
+          }
+        }, 500);
       },
     });
-
-    handler.openIframe();
   };
 
   const isFormValid = () => {
@@ -197,8 +207,8 @@ const Checkout = () => {
               <button
                 type="submit"
                 className={`w-full py-3 rounded-lg transition font-medium text-lg ${isFormValid()
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-gray-400 text-white cursor-not-allowed'
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-gray-400 text-white cursor-not-allowed'
                   }`}
                 disabled={!isFormValid()}
               >
@@ -206,7 +216,7 @@ const Checkout = () => {
               </button>
 
               <p className="text-xs text-gray-500 text-center mt-2">
-                🔒 Secure payment powered by Paystack
+                🔒 Secure payment powered by Flutterwave
               </p>
             </form>
           </div>
@@ -251,7 +261,7 @@ const Checkout = () => {
                 <span>${totalAmount.toFixed(2)}</span>
               </div>
               <div className="text-sm text-gray-500 text-center pt-2">
-                ≈ ₦{new Intl.NumberFormat('en-NG').format(Math.floor(totalAmount * 1500))}
+                ≈ ₦{nairaAmount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               </div>
             </div>
 
@@ -260,10 +270,10 @@ const Checkout = () => {
                 <strong>Payment Methods Available:</strong>
               </p>
               <ul className="text-xs text-gray-600 mt-2 space-y-1">
-                <li>💳 Card Payment (Visa, Mastercard)</li>
+                <li>💳 Card Payment (Visa, Mastercard, Verve)</li>
                 <li>🏦 Bank Transfer</li>
-                <li>📱 USSD </li>
-                <li>💰 Mobile Money (Opay, Kuda, Opay, etc.)</li>
+                <li>📱 USSD (*737#, *894#, etc)</li>
+                <li>💰 Mobile Money (Opay, Kuda, Palmpay, etc.)</li>
               </ul>
             </div>
           </div>
