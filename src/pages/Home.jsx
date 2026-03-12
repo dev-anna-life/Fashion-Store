@@ -9,6 +9,7 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('default')
+  const [viewMode, setViewMode] = useState('grid');
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -52,36 +53,36 @@ const Home = () => {
 
   const premiumProducts = products.filter((product) => product.category === 'premium');
 
-if (loading) {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-4">Welcome to Fashion Store</h1>
-          <p className="text-xl mb-8">Discover the latest trends in fashion</p>
-          <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search for products..."
-                disabled
-                className="w-full px-6 py-4 rounded-full text-gray-900 text-lg bg-white/90"
-              />
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <h1 className="text-5xl font-bold mb-4">Welcome to Fashion Store</h1>
+            <p className="text-xl mb-8">Discover the latest trends in fashion</p>
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  disabled
+                  className="w-full px-6 py-4 rounded-full text-gray-900 text-lg bg-white/90"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, index) => (
-            <ProductSkeleton key={index} />
-          ))}
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -129,13 +130,17 @@ if (loading) {
               <p className="text-gray-600 text-lg">Luxury items handpicked for you</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            <div className={
+              viewMode === 'grid'
+              ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
+              : 'flex flex-col space-y-4'
+            }>
               {premiumProducts.slice(0, 8).map((product) => (
                 <div key={product.id} className="relative">
                   <div className="absolute top-2 right-2 z-10 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold">
                     PREMIUM
                   </div>
-                  <ProductCard product={product} />
+                  <ProductCard product={product} viewMode={viewMode} />
                 </div>
               ))}
             </div>
@@ -159,10 +164,10 @@ if (loading) {
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-6 py-2 rounded-full font-medium capitalize transition ${selectedCategory === category
-                  ? category === 'premium'
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                ? category === 'premium'
+                  ? 'bg-amber-600 text-white'
+                  : 'bg-blue-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
             >
               {category === 'premium' && '⭐ '}
@@ -179,33 +184,97 @@ if (loading) {
           </div>
         )}
 
-        <div className="flex justify-end mb-6">
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+     <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-4 py-2 rounded-md transition ${
+                viewMode === 'grid'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
             >
-              <option value="default">Sort by: Default</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: Hight to Low</option>
-              <option value="rating">Highest Rated</option>
-          </select>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded-md transition ${
+                viewMode === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              </svg>
+            </button>
           </div>
 
-       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) =>
-          <ProductCard key={product.id} product={product} />
-          )}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+          >
+            <option value="default">Sort by: Default</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+          </select>
         </div>
-  ): (
-     <div className="text-center py-20">
+
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-gray-600">{filteredProducts.length} products found</p>
+
+          <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-4 py-2 rounded-md transition ${
+                viewMode === 'grid'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-4 py-2 rounded-md transition ${
+                viewMode === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {filteredProducts.length > 0 ? (
+          <div className={
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
+              : 'flex flex-col space-y-4'
+          }>
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} viewMode={viewMode} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
             <p className="text-gray-600 text-lg">No products found matching your search.</p>
-          </div> 
-       )}
-       </div>
-       </div>
-       );
-      }
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default Home;

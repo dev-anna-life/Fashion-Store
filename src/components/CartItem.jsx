@@ -5,7 +5,6 @@ const CartItem = ({ item }) => {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-white p-4 rounded-lg shadow">
-      {/* Image and Product Info */}
       <div className="flex items-start gap-4 flex-1">
         <img
           src={item.image}
